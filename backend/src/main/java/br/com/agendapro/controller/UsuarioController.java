@@ -1,3 +1,4 @@
+
 package br.com.agendapro.controller;
 
 import br.com.agendapro.dto.UsuarioRequest;
@@ -24,6 +25,22 @@ public class UsuarioController {
             @Valid @RequestBody UsuarioRequest request) {
 
         Usuario usuario = service.criar(
+                request.nome(),
+                request.email(),
+                request.senha(),
+                request.telefone()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(UsuarioResponse.de(usuario));
+    }
+
+    @PostMapping("/proprietarios")
+    public ResponseEntity<UsuarioResponse> criarProprietario(
+            @Valid @RequestBody UsuarioRequest request) {
+
+        Usuario usuario = service.criarProprietario(
                 request.nome(),
                 request.email(),
                 request.senha(),

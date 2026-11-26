@@ -1,3 +1,4 @@
+
 package br.com.agendapro.entity;
 
 import jakarta.persistence.*;
@@ -8,10 +9,13 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "estabelecimentos")
 public class Estabelecimento {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank @Size(max = 120)
+    @NotBlank
+    @Size(max = 120)
     @Column(nullable = false, length = 120)
     private String nome;
 
@@ -31,27 +35,76 @@ public class Estabelecimento {
     @Column(nullable = false, updatable = false)
     private LocalDateTime criadoEm = LocalDateTime.now();
 
-    // Nesta primeira entrega, o proprietário é identificado por e-mail.
-    // Na integração com autenticação, trocar por @ManyToOne Usuario.
-    @NotBlank @Column(nullable = false, length = 160)
-    private String proprietarioEmail;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "proprietario_id", nullable = false)
+    private Usuario proprietario;
 
-    protected Estabelecimento() {}
+    protected Estabelecimento() {
+    }
 
-    public Estabelecimento(String nome, String descricao, String telefone, String endereco, String proprietarioEmail) {
-        this.nome = nome; this.descricao = descricao; this.telefone = telefone;
-        this.endereco = endereco; this.proprietarioEmail = proprietarioEmail;
+    public Estabelecimento(
+            String nome,
+            String descricao,
+            String telefone,
+            String endereco,
+            Usuario proprietario) {
+
+        this.nome = nome;
+        this.descricao = descricao;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.proprietario = proprietario;
     }
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public String getDescricao() { return descricao; }
-    public String getTelefone() { return telefone; }
-    public String getEndereco() { return endereco; }
-    public Boolean getAtivo() { return ativo; }
-    public LocalDateTime getCriadoEm() { return criadoEm; }
-    public String getProprietarioEmail() { return proprietarioEmail; }
-    public void atualizar(String nome, String descricao, String telefone, String endereco) {
-        this.nome = nome; this.descricao = descricao; this.telefone = telefone; this.endereco = endereco;
+
+    public Long getId() {
+        return id;
     }
-    public void desativar() { this.ativo = false; }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public Usuario getProprietario() {
+        return proprietario;
+    }
+
+    public String getProprietarioEmail() {
+        return proprietario.getEmail();
+    }
+
+    public void atualizar(
+            String nome,
+            String descricao,
+            String telefone,
+            String endereco) {
+
+        this.nome = nome;
+        this.descricao = descricao;
+        this.telefone = telefone;
+        this.endereco = endereco;
+    }
+
+    public void desativar() {
+        this.ativo = false;
+    }
 }

@@ -23,12 +23,37 @@ public class UsuarioService {
 
     @Transactional
     public Usuario criar(String nome, String email, String senha, String telefone) {
+        return criarComPapel(
+                nome, email, senha, telefone, PapelUsuario.CLIENTE
+        );
+    }
+
+    @Transactional
+    public Usuario criarProprietario(
+            String nome,
+            String email,
+            String senha,
+            String telefone) {
+
+        return criarComPapel(
+                nome, email, senha, telefone, PapelUsuario.PROPRIETARIO
+        );
+    }
+
+    private Usuario criarComPapel(
+            String nome,
+            String email,
+            String senha,
+            String telefone,
+            PapelUsuario papel) {
 
         email = email.trim().toLowerCase();
 
         if (repository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Este e-mail já está cadastrado.");
-}
+            throw new IllegalArgumentException(
+                    "Este e-mail já está cadastrado."
+            );
+        }
 
         String senhaCriptografada = passwordEncoder.encode(senha);
 
@@ -39,7 +64,7 @@ public class UsuarioService {
                 telefone
         );
 
-        usuario.getPapeis().add(PapelUsuario.CLIENTE);
+        usuario.getPapeis().add(papel);
 
         return repository.save(usuario);
     }
